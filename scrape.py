@@ -3,13 +3,19 @@ import urllib.request
 import urllib
 
 COMMA = "%2C"
-
+# 8812 4/9 pm
+# 8980 4/10 am
 # should have a target and if it's worse, minus points, but if better, plus points. 
 
 SHAPE_TOLERANCE =   0   # max 1
 CUT_TOLERANCE =     4   # max 4
 COLOR_TOLERANCE =   5   # max 6   
 CLARITY_TOLERANCE = 6   # max 7
+
+CUT_TARGET =        "Ideal"
+COLOR_TARGET =      "H"
+CLARITY_TARGET =    "VS2"
+PRICE_TARGET =      3500
 
 MIN_CARAT =     1.25
 MAX_CARAT =     1.5
@@ -20,14 +26,17 @@ REAL_VIEW =     "Yes"
 
 COLOR_WEIGHT = 100 
 CUT_WEIGHT = 100 
-CLARITY_WEIGHT = 100 
-PRICE_WEIGHT = 25
+CLARITY_WEIGHT = 50 
+PRICE_WEIGHT = 33
 
-def getMap(array):
+def getMap(array, target):
     _map = {}
-    for i, elem in enumerate(array):
 
-        _map[elem.replace("+", " ")] = i
+    target_index = array.index(target)
+    value = -target_index
+    for i, elem in enumerate(array):
+        _map[elem.replace("+", " ")] = value
+        value = value + 1
     return _map
 
 def buildParamString(type_array, tolerance):
@@ -49,13 +58,15 @@ colors = ["D", "E", "F", "G", "H", "I", "J"]
 clarities = ["FL", "IF", "VVS1", "VVS2", "VS1", "VS2", "SI1", "SI2"]
 
 # maps
-color_map = getMap(colors)
-cut_map = getMap(cuts)
-clarity_map = getMap(clarities)
+color_map = getMap(colors, COLOR_TARGET)
+cut_map = getMap(cuts, CUT_TARGET)
+clarity_map = getMap(clarities, CLARITY_TARGET)
 
+
+print(clarity_map)
 
 def diamondImperfections(color, cut, clarity, price):
-    price_score = (price - MIN_PRICE) * PRICE_WEIGHT / 100
+    price_score = (price - PRICE_TARGET) * PRICE_WEIGHT / 100
     color_score = COLOR_WEIGHT * color_map[color]
     cut_score = CUT_WEIGHT * cut_map[cut]
     clarity_score = CLARITY_WEIGHT * clarity_map[clarity]
